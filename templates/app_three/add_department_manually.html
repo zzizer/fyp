@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+
+<title>Add Department manually-ACM</title>
+
+<div class="row">
+    <h2 class='py-3 mt-3'>Add Department Manually</h2>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button class="btn btn-secondary" type="submit">Add Department</button>
+    </form>
+</div>
+
+{% endblock %}
