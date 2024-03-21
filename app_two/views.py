@@ -23,6 +23,10 @@ from .models import AttendanceRecord
 def attendance_dashboard(request):
 
     attendance = AttendanceRecord.objects.all()
+    registration_number = request.GET.get('filter_field')
+
+    if registration_number:
+        attendance = attendance.filter(student__registration_number=registration_number)
 
     context = {
         'attendance': attendance
