@@ -56,7 +56,7 @@ def analysis(course_unit_id, room_name):
     data_for_today = get_timetable_entries_for_current_date()
 
     entries = len(data_for_today)
-    print(f'Units Today: {entries}')
+    # print(f'Units Today: {entries}')
 
     current_time = datetime.now().time()
 
@@ -79,7 +79,7 @@ def analysis(course_unit_id, room_name):
     # print(f'Units for {time_slot}: {units_number}')
 
     units_number = room_ids.count([room_name])
-    print(room_ids)
+    # print(room_ids)
     # print(f'Units for {time_slot}: {units_number}')
     
     # print(room_ids)
@@ -110,35 +110,35 @@ def room_analysis(course_unit_id, room_name):
             cursor = connection.cursor()
 
             cursor.execute("""
-                SELECT id, tables_or_single_seats, total_tables, total_seats
+                SELECT id, room_name, tables_or_single_seats, total_tables, total_seats
                 FROM app_three_room
                 WHERE id = %s
             """, (room_name,))
 
             room_data = cursor.fetchall()
-            print(f'room_data: {room_data}')
+            # print(f'room_data: {room_data}')
             
-            if room_data[0][1] == 'Tables':
+            if room_data[0][2] == 'Tables':
                 if units_number == 2:
                     if course_units[0] != course_unit_one:
-                        program1_seats, _ = room_with_tables_two_programs(room_data[0][2])
-                        return program1_seats
+                        program1_seats, _ = room_with_tables_two_programs(room_data[0][3])
+                        return program1_seats, room_data[0][1]
                     elif course_units[1]:
-                        _ , program2_seats = room_with_tables_two_programs(room_data[0][2])
-                        return program2_seats
+                        _ , program2_seats = room_with_tables_two_programs(room_data[0][3])
+                        return program2_seats, room_data[0][1]
 
                 elif units_number == 1:
-                        program_seats = room_with_tables_single_program(room_data[0][2])
+                        program_seats = room_with_tables_single_program(room_data[0][3])
                         # print(f'program_seats: {program_seats}')
-                        return program_seats
+                        return program_seats, room_data[0][1]
                 else:
-                    print('No available seats')
+                    # print('No available seats')
                     return 0
 
-            elif room_data[0][1] == 'Single Seats':
-                available_seats = room_with_single_seats(room_data[0][3])
+            elif room_data[0][2] == 'Single Seats':
+                available_seats = room_with_single_seats(room_data[0][4])
                 # print(f'available_seats: {available_seats}')
-                return available_seats
+                return available_seats, room_data[0][1]
 
     finally:
         close_database_connection(connection)

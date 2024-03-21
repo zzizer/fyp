@@ -2,7 +2,7 @@ from SPECIAL.connect_to_database import connect_to_database, close_database_conn
 from datetime import datetime, date
 from LCD.display import DisplayOnLCD
 from time import sleep
-from SPECIAL.seat_allocation1 import generate_seat_allocation
+from SPECIAL.seat_allocation_logic_executor import generate_seat_allocation
 
 display = DisplayOnLCD()
 
