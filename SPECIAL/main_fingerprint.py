@@ -51,7 +51,7 @@ def main():
             stored_characteristics1 = eval(student[2])
             stored_characteristics2 = eval(student[3])
 
-            if comparison(scanned_xtics, stored_characteristics1) > 80 or comparison(scanned_xtics, stored_characteristics2) > 80:
+            if comparison(scanned_xtics, stored_characteristics1) > 85 or comparison(scanned_xtics, stored_characteristics2) > 85:
                 student_id = student[0]
 
                 privileged_access, registration_number, balance, registered_course_units = parameter_check(student_id)
