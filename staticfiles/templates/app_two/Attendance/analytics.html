@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h1 class="py-3">Attendance Statistics</h1>
+
+<form method="post">
+    {% csrf_token %}
+    <label class="mb-4" for="course_unit_id">Select Course Unit:</label>
+    <select id="course_unit_id" name="course_unit_id">
+        <option value="">Select a course unit</option>
+        {% for course_unit in course_units %}
+            <option value="{{ course_unit.id }}">{{ course_unit.course_name }}</option>
+        {% endfor %}
+    </select>
+    <button type="submit">Submit</button>
+</form>
+
+
+{% if selected_course_unit %}
+    <h2 class="mt-3">Attendance Statistics for {{ selected_course_unit.course_name }}</h2>
+    <p>Total Attendance: {{ total_attendance }}</p>
+    <p>Attendance Rate: {{ attendance_rate }}%</p>
+    <p>Male Attendance Rate: {{ male_attendance_rate }}%</p>
+    <p>Female Attendance Rate: {{ female_attendance_rate }}%</p>
+{% else %}
+    <p>Please select a course unit.</p>
+{% endif %}
+
+{% endblock %}

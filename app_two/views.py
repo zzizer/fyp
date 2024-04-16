@@ -16,9 +16,9 @@ from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 from app_three.models import College, School, Program, Department, CourseUnit, Room, Timetable
-
-from django.shortcuts import render
-from .models import AttendanceRecord
+from .analytics import calculate_total_attendance, calculate_attendance_rate, calculate_gender_attendance_rate 
+from plotly.offline import plot
+import plotly.graph_objs as go
 
 def attendance_dashboard(request):
 
@@ -104,7 +104,7 @@ def scan_save_fingerprint(request, id):
 
         display = DisplayOnLCD()
 
-        f = PyFingerprint('/dev/ttyUSB0', 57600, 0xFFFFFFFF, 0x00000000)
+        f = PyFingerprint('/dev/ttyS0', 57600, 0xFFFFFFFF, 0x00000000)
 
         if not f.verifyPassword():
             raise ValueError('The given fingerprint sensor password is wrong!')
@@ -156,3 +156,30 @@ def scan_save_fingerprint(request, id):
         messages.error(request, f'Operation failed! Exception message: {str(e)}')
         display.random_message('Operation failed')
         return redirect(reverse('student_details', args=[id]))
+
+def analytics(request):
+    course_units = CourseUnit.objects.all()
+    selected_course_unit = None
+    
+    if request.method == 'POST':
+        selected_course_unit_id = request.POST.get('course_unit_id')
+        selected_course_unit = CourseUnit.objects.get(id=selected_course_unit_id)
+        
+        total_attendance = calculate_total_attendance(selected_course_unit)
+        attendance_rate = calculate_attendance_rate(selected_course_unit)
+        male_attendance_rate, female_attendance_rate = calculate_gender_attendance_rate(selected_course_unit)
+
+        context = {
+            'course_units': course_units,
+            'selected_course_unit': selected_course_unit,
+            'total_attendance': total_attendance,
+            'attendance_rate': attendance_rate,
+            'male_attendance_rate': male_attendance_rate,
+            'female_attendance_rate': female_attendance_rate,
+        }
+        return render(request, 'app_two/Attendance/analytics.html', context)
+    
+    context = {
+        'course_units': course_units,
+    }
+    return render(request, 'app_two/Attendance/analytics.html', context)

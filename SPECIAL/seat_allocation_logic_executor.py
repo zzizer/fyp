@@ -1,21 +1,8 @@
 import random
 from SPECIAL.seat_allocation_logic import room_analysis
+from SPECIAL.connect_to_database import connect_to_database, close_database_connection
 
-def generate_seat_allocation(course_unit_id, venue_or_room):
-
-    # venue_or_room = 12
-    # course_unit_id = '5f5441e1-a855-4618-9da9-1eeb1b4439f8'
-
-    # print(f'course_unit_id: {course_unit_id}')
-    # print(f'venue_or_room: {venue_or_room}')
-
-    all_seats, room_name = room_analysis(course_unit_id, venue_or_room[0])
-
-    # print(f'Sample: {sample}')
-
-    
-    # rooms = ['Room X']
-
+def unique_seat_generation(all_seats, room_name):
     # Randomly choose a seat number and a room
     random_seat = random.choice(all_seats)
     random_room = random.choice([room_name])
@@ -23,8 +10,40 @@ def generate_seat_allocation(course_unit_id, venue_or_room):
     # Concatenate them to create the seat allocation
     seat_allocation = f'{random_room}-{random_seat}'
 
-    return seat_allocation
-    # return venue_or_room
-    # print(f'Seat allocation: {seat_allocation}')
+    print(f"seat_allocation: {seat_allocation}")
 
-# print(generate_seat_allocation())
+    return seat_allocation
+
+def generate_seat_allocation(course_unit_id, venue_or_room):
+
+    all_seats, room_name = room_analysis(course_unit_id, venue_or_room[0])
+
+    connection = connect_to_database()
+
+    if connection:
+        try:
+            with connection.cursor() as cursor:
+
+                seat_allocation = True
+
+                while seat_allocation:
+                    
+                    possible_seat = unique_seat_generation(all_seats, room_name)
+
+                    seat_allocation_query = "SELECT allocated_room_and_seat FROM public.app_two_attendancerecord WHERE allocated_room_and_seat = %s"
+                    cursor.execute(seat_allocation_query, (possible_seat,))
+                    seat_allocation = cursor.fetchone()
+
+                    # print(f"seat_allocation: {seat_allocation}")
+                    # if seat_allocation==None:
+                    #     seat_allocation = False
+
+                    if seat_allocation != None:
+                        continue
+                    
+                    return possible_seat                       
+
+        except Exception as e:
+            print(f"Error generating seat allocation: {str(e)}")
+        finally:
+            close_database_connection(connection)

@@ -29,7 +29,7 @@ def main():
     connection = None  # Initialize the connection variable
 
     try:
-        f = PyFingerprint('/dev/ttyUSB0', 57600, 0xFFFFFFFF, 0x00000000)
+        f = PyFingerprint('/dev/ttyS0', 57600, 0xFFFFFFFF, 0x00000000)
         if not f.verifyPassword():
             raise ValueError('The given fingerprint sensor password is wrong!')
 
