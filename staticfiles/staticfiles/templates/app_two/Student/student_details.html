@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+    <div class="col-lg-12 py-4">
+
+        <h1>Student Details</h1>
+        <hr>
+
+        <div class="row">
+            <div class="col-md-4">
+                <h5>Photo</h5>
+                <img src="{{ student.imageURL }}" alt="student photo" width="200px" height="200px">
+                
+                <hr>
+                <div class="mt-3">
+                    <p>Registered Course Units: 
+                        {% if student.registered_course_units.all %}
+                            <ul>
+                                {% for registered_course_unit in student.registered_course_units.all %}
+                                    <li>{{ registered_course_unit.course_name }}</li>
+                                {% endfor %}
+                            </ul>
+                        {% else %}
+                            <ul>
+                                <li>No Registered Units</li>
+                            </ul>
+                        {% endif %}
+                    </p>
+                </div>
+
+            </div>
+            <div class="col-md-8">
+
+                <p>Student Name: {{ student.first_name }} {{ student.surname }} {% if student.middle_name %} {{ student.middle_name }} {% endif %}</p>
+                <p>Student No: {{ student.student_number }}</p>
+                <p>Student Reg No: {{ student.registration_number }}</p>
+                <p>Student Program: {{ student.program }}</p>
+                <p>Balance: {{ student.balance }}</p>
+                <p>Has Privilleged Access: {% if student.privilleged_access %}Yes{% else %}No{% endif %}</p>
+                {% if student.face_encoding %}
+                <p>Student Face Encoding: Already Generated</p>
+                {% else %}
+                <p>Student Face Encoding: Not Available</p>
+                {% endif %}
+                {% if student.fingerprint_xtics1 %}
+                <p>Student Fingerprint Encodings: Already Captured</p>
+                {% else %}
+                <p>Student Fingerprint Encodings: Not Available</p>
+                {% endif %}
+                <a class="btn btn-primary" href="{% url 'student_update' student.id %}">Edit</a>
+                <a class="btn btn-primary" href="{% url 'all_students' %}">Back</a>
+
+                {% if student.photo and not student.fingerprint_xtics1 %}
+                    <a class="btn btn-primary" href="{% url 'scan_save_fingerprint' id=student.id %}">Scan & Save Fingerprint</a>
+                {% endif %}
+
+                {% if student.photo and not student.face_encoding %}
+                    <a class="btn btn-primary" href="{% url 'generate_face_encoding' id=student.id %}">Generate Face Encoding</a>
+                {% endif %}
+
+            </div>
+        </div>
+
+    </div>
+{% endblock %}

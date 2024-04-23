@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="col-lg-12 py-4">
+
+    <h1>Update student</h1>
+    <hr>
+
+    <form action="" method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <input type="submit" value="Update Now">
+    </form>
+    
+</div>
+
+{% endblock %}

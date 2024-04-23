@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+
+<div class="container py-5">
+    <div class="row">
+        <div class="col-lg-12">
+            <h2>Attendance Records</h2>
+            <hr>
+
+            <div class="row">
+                <div class="col-lg-4 mx-auto" style="width: 400;">
+                    <form method="GET" action="{% url 'attendance_dashboard' %}">
+                        <div class="input-group mb-3">
+                            <input type="text" class="form-control" name="filter_field" placeholder="Enter registration number" aria-label="Registration number" aria-describedby="button-addon2">
+                            <button class="btn btn-outline-secondary" type="submit" id="button-addon2">Filter</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <hr>
+
+
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th scope="col">Reg No</th>
+                        <th scope="col">Full Name</th>
+                        <th scope="col">Course Unit</th>
+                        <th scope="col">Room No.</th>
+                        <th scope="col">Date/Time</th>
+                    </tr>
+                </thead>
+                <tbody class="table-group-divider">
+                    {% for attendee in attendance %}
+
+                    <tr>
+                        <th scope="row">{{attendee.student.registration_number}}</th>
+                        <td>{{attendee.student.surname}} {{attendee.student.first_name}}</td>
+                        <td>{{attendee.course_unit}}</td>
+                        <td>{{attendee.allocated_room_and_seat}}</td>
+                        <td>{{attendee.date}} {{attendee.time}}</td>    
+                    </tr>
+                    {% endfor %}
+
+                </tbody>
+            </table>
+
+            <a href="{% url 'attendance_statistics' %}" class="text-decoration-none tex-primary">Attendance Statistics</a>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

@@ -17,8 +17,8 @@ from django.http import HttpResponseRedirect
 from django.urls import reverse
 from app_three.models import College, School, Program, Department, CourseUnit, Room, Timetable
 from .analytics import calculate_total_attendance, calculate_attendance_rate, calculate_gender_attendance_rate 
-from plotly.offline import plot
-import plotly.graph_objs as go
+# from plotly.offline import plot
+# import plotly.graph_objs as go
 
 def attendance_dashboard(request):
 
@@ -104,7 +104,7 @@ def scan_save_fingerprint(request, id):
 
         display = DisplayOnLCD()
 
-        f = PyFingerprint('/dev/ttyUSB0', 57600, 0xFFFFFFFF, 0x00000000)
+        f = PyFingerprint('/dev/ttyS0', 57600, 0xFFFFFFFF, 0x00000000)
 
         if not f.verifyPassword():
             raise ValueError('The given fingerprint sensor password is wrong!')
