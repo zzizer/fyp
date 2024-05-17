@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+
+<title>Dashboard</title>
+
+<div class="container">
+
+    <div class="row">
+        <div class="col-lg-12">
+            
+<a href="{% url 'dashboard' %}" class="btn btn-primary mb-3 mt-3">Back</a>
+
+<form method="get" action="{% url 'manage_all' %}">
+    <label for="model">Select Model:</label>
+    <select name="model" id="model">
+        <option value="Select">Select</option>
+        <option value="Room">Rooms</option>
+        <option value="CourseUnit">CourseUnit</option>
+        <option value="TimeTable">TimeTable</option>
+        <option value="Program">Programs</option>
+        <option value="College">College</option>
+        <option value="Department">Department</option>
+        <option value="School">School</option>
+    </select>
+    <button type="submit">Filter</button>
+</form>
+
+<hr>
+
+<ul>
+    {% if items %}
+    {% for item in items %}
+        {% if item.college_name %}
+        <li>{{ item.college_name }}</li>
+        {% endif %}
+        {% if item.room_name %}
+        <li>{{ item.room_name }}</li>
+        {% endif %}
+        {% if item.program_name %}
+        <li>{{ item.program_name }}</li>
+        {% endif %}
+        {% if item.course_name %}
+        <li>{{ item.course_name }}</li>
+        {% endif %}
+        {% if item.school_name %}
+        <li>{{ item.school_name }}</li>
+        {% endif %}
+        {% if item.department_name %}
+        <li>{{ item.department_name }}</li>
+        {% endif %}
+    {% endfor %}
+    {% else %}
+    <li>No results found..!</li>
+    {% endif %}
+</ul>
+        </div>
+    </div>
+</div>
+
+
+{% endblock %}

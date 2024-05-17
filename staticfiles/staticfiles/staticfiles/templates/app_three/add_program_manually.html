@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+
+<title>Add Program manually-ACM</title>
+
+<div class="row">
+    <h2 class='py-3 mt-3'>Add Program Manually</h2>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button class="btn btn-secondary" type="submit">Add Program</button>
+    </form>
+</div>
+
+{% endblock %}

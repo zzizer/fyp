@@ -1,0 +1,157 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+
+<title>Dashboard</title>
+
+<h1 class="py-3">Dashboard</h1>
+
+<div class="row">
+    <div class="col-lg-8">
+        <hr>
+        <div class="creative-element">
+            <h3>Welcome to the XXX-XXX-XXX Management!</h3>
+            <p>Explore the various features and functionalities available:</p>
+            <ul>
+                <li>Manage student registrations</li>
+                <li>View and update student information</li>
+                <li>Generate reports and statistics</li>
+                <li>And much more!</li>
+            </ul>
+        </div>
+
+        <div class="creative-element">
+            <h3>Important Links</h3>
+
+            <ul class="mt-3">
+                <li class="mb-3">
+                    <div class="row">
+                        <div class="col-lg-5">
+                            <h5 class="mt-1">Add College(s):</h5>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="dashboard-buttons">
+                                <a href="{% url 'add_college_from_csv' %}" class="btn btn-primary">Upload CSV file</a>
+                                <a href="{% url 'add_college_manually' %}" class="btn btn-secondary">Add manually</a>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+
+                <li class="mb-3">
+                    <div class="row">
+                        <div class="col-lg-5">
+                            <h5 class="mt-1">Add School(s):</h5>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="dashboard-buttons">
+                                <a href="{% url 'add_school_from_csv' %}" class="btn btn-primary">Upload CSV file</a>
+                                <a href="{% url 'add_school_manually' %}" class="btn btn-secondary">Add manually</a>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+
+                <li class="mb-3">
+                    <div class="row">
+                        <div class="col-lg-5">
+                            <h5 class="mt-1">Add Department(s):</h5>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="dashboard-buttons">
+                                <a href="{% url 'add_department_from_csv' %}" class="btn btn-primary">Upload CSV file</a>
+                                <a href="{% url 'add_department_manually' %}" class="btn btn-secondary">Add manually</a>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+
+                <li class="mb-3">
+                    <div class="row">
+                        <div class="col-lg-5">
+                            <h5 class="mt-1">Add Program(s):</h5>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="dashboard-buttons">
+                                <a href="{% url 'add_program_from_csv' %}" class="btn btn-primary">Upload CSV file</a>
+                                <a href="{% url 'add_program_manually' %}" class="btn btn-secondary">Add manually</a>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+
+                <li class="mb-3">
+                    <div class="row">
+                        <div class="col-lg-5">
+                            <h5 class="mt-1">Add CourseUnit(s):</h5>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="dashboard-buttons">
+                                <a href="{% url 'add_courseunit_from_csv' %}" class="btn btn-primary">Upload CSV file</a>
+                                <a href="{% url 'add_courseunit_manually' %}" class="btn btn-secondary">Add manually</a>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+
+                <li class="mb-3">
+                    <div class="row">
+                        <div class="col-lg-5">
+                            <h5 class="mt-1">Add TimeTable(s):</h5>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="dashboard-buttons">
+                                <a href="{% url "add_timetable_from_csv" %}" class="btn btn-primary">Upload CSV file</a>
+                                <a href="{% url 'add_tt_entry_manually' %}" class="btn btn-secondary">Add manually</a>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+
+                <li class="mb-3">
+                    <div class="row">
+                        <div class="col-lg-5">
+                            <h5 class="mt-1">Add Room(s):</h5>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="dashboard-buttons">
+                                <a href="{% url "add_rooms_from_csv" %}" class="btn btn-primary">Upload CSV file</a>
+                                <a href="{% url 'add_room_manually' %}" class="btn btn-secondary">Add manually</a>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+            </ul>
+                        
+        </div>
+
+    </div>
+
+    <div class="col-lg-4">
+        <hr>
+        <div class="creative-element">
+            <h3>Quick Links</h3>
+            <ul>
+                <li><a href="#">View All Students</a></li>
+                <li><a href="#">Register Student</a></li>
+                <li><a href="{% url "timetable" %}">TimeTable</a></li>
+                <li><a href="{% url 'manage_all' %}">Manage All</a></li>
+            </ul>
+        </div>
+
+        <hr>
+
+        <div class="creative-element">
+            <h3>Upcoming Events</h3>
+            <ul>
+                <li>Workshop on Career Development - 10th March</li>
+                <li>Guest Lecture on Entrepreneurship - 15th March</li>
+                <li>Sports Day - 20th March</li>
+            </ul>
+        </div>
+
+    </div>
+</div>
+
+{% endblock content %}

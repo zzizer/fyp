@@ -1,29 +1,46 @@
 import cv2 as cv
 from picamera2 import Picamera2
-# from picamera2 import PiCamera2 
+import face_recognition
 
-# Create a PiCamera2 object
 picam2 = Picamera2()
 
-# Configure preview settings
-picam2.preview_configuration.main.size = (800, 800)  # Corrected attribute name
-picam2.preview_configuration.main.format = "RGB888"  # Changed format to "RGB" (no need for 888)
+picam2.preview_configuration.main.size = (800, 800)
+picam2.preview_configuration.main.format = "RGB888"
 picam2.preview_configuration.align()
 
-# Start the preview
-picam2.configure("preview")  # Changed method call to correct syntax
+picam2.configure("preview")  
 picam2.start()
 
 while True:
-    # Capture image as an array
-    im = picam2.capture_array()  # Corrected method call
+    im = picam2.capture_array()  
     
-    # Display the image
     cv.imshow("Camera", im)
     
-    # Wait for 'q' key to exit
-    if cv.waitKey(1) == ord('q'):
+    key = cv.waitKey(1)
+    
+    if key == ord('t'):
+        # Convert the captured frame to grayscale
+        gray_im = cv.cvtColor(im, cv.COLOR_RGB2GRAY)
+        
+        # Use OpenCV for face detection
+        face_cascade = cv.CascadeClassifier(cv.data.haarcascades + 'haarcascade_frontalface_default.xml')
+        faces = face_cascade.detectMultiScale(gray_im, scaleFactor=1.3, minNeighbors=5)
+
+        if len(faces) > 0:
+            # Extract the face region
+            x, y, w, h = faces[0]
+            face_region = gray_im[y:y+h, x:x+w]
+
+            # Convert the grayscale image to RGB
+            rgb_image = cv.cvtColor(im, cv.COLOR_RGB2BGR)
+
+            # Use face_recognition to generate face encoding
+            encoding = face_recognition.face_encodings(rgb_image, [(y, x + w, y + h, x)])[0]
+
+            # Process the encoding (e.g., store it in the database or perform further actions)
+            print(encoding)
+    
+    elif key == ord('q'):
         break
 
-# Clean up
-cv.destroyAllWindows()  # Corrected method call
+cv.destroyAllWindows()

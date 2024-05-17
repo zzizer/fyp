@@ -1,29 +1,86 @@
-import cv2 as cv
-from picamera2 import Picamera2
-# from picamera2 import PiCamera2 
+from SPECIAL.facial_detection_and_recognition import facial_detection_and_recognition
+from SPECIAL.connect_to_database import connect_to_database, close_database_connection
 
-# Create a PiCamera2 object
-picam2 = Picamera2()
 
-# Configure preview settings
-picam2.preview_configuration.main.size = (800, 800)  # Corrected attribute name
-picam2.preview_configuration.main.format = "RGB888"  # Changed format to "RGB" (no need for 888)
-picam2.preview_configuration.align()
+def get_data_from_database():
+    connection = connect_to_database()
+    if connection:
+        try:
+            with connection.cursor() as cursor:
+                cursor.execute("SELECT id, face_encoding FROM public.app_two_student")
+                students = cursor.fetchall()
+                return students
+        except Exception as e:
+            print(f"Error fetching data from the database: {str(e)}")
+        finally:
+            close_database_connection(connection)
 
-# Start the preview
-picam2.configure("preview")  # Changed method call to correct syntax
-picam2.start()
+    return None
 
-while True:
-    # Capture image as an array
-    im = picam2.capture_array()  # Corrected method call
-    
-    # Display the image
-    cv.imshow("Camera", im)
-    
-    # Wait for 'q' key to exit
-    if cv.waitKey(1) == ord('q'):
-        break
+def main():
+    connection=None
 
-# Clean up
-cv.destroyAllWindows()  # Corrected method call
+    try:
+        get_data_from_database()
+
+        data = get_data_from_database()
+
+        for student in data:
+
+            face_encoding = facial_detection_and_recognition()
+
+            stored_face_encoding = eval(student[1])
+            
+            if comparison(face_encoding, stored_face_encoding) > 85:
+                student_id = student[0]
+
+                privileged_access, registration_number, balance, registered_course_units = parameter_check(student_id)
+
+                if privileged_access:
+                    match_found, course_unit_id, venue_or_room = has_registered_for_current_date(student_id, registered_course_units)
+
+                    if match_found:
+                        # call the function to mark attendance
+                        seat_and_room = mark_attendance(student_id, course_unit_id, venue_or_room)
+                        # display.on_success(registration_number, "Attendance-Recorded", seat_and_room)
+                        print(f"Attendance-Recorded for {registration_number} at {seat_and_room}")
+                        break
+                    else:
+                        # display.on_failure("Not Registered")
+                        print("Not Registered")
+                        break
+
+                elif balance == 0:
+                    match_found, course_unit_id, venue_or_room = has_registered_for_current_date(student_id, registered_course_units)
+
+                    if match_found:
+                        # call the function to mark attendance
+                        seat_and_room = mark_attendance(student_id, course_unit_id, venue_or_room)
+                        # display.on_success(registration_number, "Attendance-Recorded", seat_and_room)
+                        print(f"Attendance-Recorded for {registration_number} at {seat_and_room}")
+                        break
+
+                    else:
+                        # display.on_failure("Not Registered")
+                        print("Not Registered")
+                        break
+                
+                elif balance != 0:
+                    # display.on_failure(f"Unpaid Tuition Balance: {balance}")
+                    print(f"Unpaid Tuition Balance: {balance}")
+                    break
+
+            else: 
+                # display.random_message("Not Found")
+                print("Not Found")
+            
+    except Exception as e:
+        print(f'Exception occurred: {str(e)}')
+        exit(1)
+
+    finally:
+        if connection:
+            close_database_connection(connection)
+
+if __name__ == "__main__":
+    main()
