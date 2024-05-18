@@ -1,9 +1,48 @@
+import tensorflow as tf
+import numpy as np
+from mtcnn import MTCNN
+import cv2 as cv
 
-def facial_detection_and_recognition():
+model_path = tf.saved_model.load("/home/fyp/Desktop/model/20180402-114759.pb")
+model = load_facenet_model(model_path)
 
-    face_encoding = "detected face encoding"
+def preprocess_image(image):
+    image = tf.image.resize(image, (160, 160))
+    image = (image - 127.5) / 127.5
+    return np.expand_dims(image, axis=0)
 
-    return face_encoding
+detector = MTCNN()
+
+def load_image(image_path):
+    image=tf.io.read_file(image_path)
+    image=tf.image.decode_jpeg(image, channels=3)
+    return image
+
+image_path = "/home/fyp/Desktop/photos/2000706650.jpeg"
+image = load_image(image_path)
+
+detections = detector.detect_faces(image.numpy())
+
+if detections:
+    x, y, width, height = detections[0]["box"]
+    face = image[y:y+height, x:x+width]
+    preprocessed_face = preprocess_image(face)
+
+
+    embeddings = model(preprocessed_face)
+
+    print(embeddings)
+
+else:
+    print("No face detected")
+
+# def facial_detection_and_recognition():
+
+#     face_encoding = "detected face encoding"
+
+#     return face_encoding
+
+# print(facial_detection_and_recognition())
 
 
 # print(facial_detection_and_recognition())
