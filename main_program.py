@@ -2,6 +2,7 @@ import RPi.GPIO as GPIO
 import time
 from LCD.display import DisplayOnLCD
 from SPECIAL.main_fingerprint import main
+from SPECIAL.main_facial import main1
 
 display = DisplayOnLCD()
 
@@ -73,7 +74,22 @@ try:
                 # Enter mode 2
                 control_led(led_pin_1, False)
                 control_led(led_pin_2, True)
-                print('Button for green pressed')
+                # print('Button for green pressed')
+                display.request_face()
+                time.sleep(4)
+                timeout_start = time.time()
+
+                while True:
+                    main1()
+                    time.sleep(0.9)
+
+                    # Check if button 1 is pressed to break out of the inner loop
+                    if button_pressed(button_pin_1):
+                        break
+
+                    # Check if timeout is reached (e.g., 10 seconds)
+                    if time.time() - timeout_start > 10:
+                        break
                 display.request_face()
                 current_mode = 2
 

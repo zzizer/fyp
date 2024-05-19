@@ -1,6 +1,6 @@
 from SPECIAL.facial_detection_and_recognition import facial_detection_and_recognition
 from SPECIAL.connect_to_database import connect_to_database, close_database_connection
-
+from SPECIAL.comparison import face_encoding_similarity
 
 def get_data_from_database():
     connection = connect_to_database()
@@ -17,7 +17,7 @@ def get_data_from_database():
 
     return None
 
-def main():
+def main1():
     connection=None
 
     try:
@@ -27,11 +27,11 @@ def main():
 
         for student in data:
 
-            face_encoding = facial_detection_and_recognition()
+            scanned_face_encoding = facial_detection_and_recognition()
 
-            stored_face_encoding = eval(student[1])
+            stored_face_encoding = student[1]
             
-            if comparison(face_encoding, stored_face_encoding) > 85:
+            if face_encoding_similarity(scanned_face_encoding, stored_face_encoding) > 85:
                 student_id = student[0]
 
                 privileged_access, registration_number, balance, registered_course_units = parameter_check(student_id)
@@ -82,5 +82,5 @@ def main():
         if connection:
             close_database_connection(connection)
 
-if __name__ == "__main__":
-    main()
+# if __name__ == "__main__":
+#     main()
