@@ -1,6 +1,10 @@
 from SPECIAL.facial_detection_and_recognition import facial_detection_and_recognition
 from SPECIAL.connect_to_database import connect_to_database, close_database_connection
 from SPECIAL.comparison import face_encoding_similarity
+import numpy as np
+from LCD.display import DisplayOnLCD
+
+display = DisplayOnLCD()
 
 def get_data_from_database():
     connection = connect_to_database()
@@ -30,6 +34,7 @@ def main1():
             scanned_face_encoding = facial_detection_and_recognition()
 
             stored_face_encoding = student[1]
+            # print(f'stored_face_encoding: {stored_face_encoding}')
             
             if face_encoding_similarity(scanned_face_encoding, stored_face_encoding) > 85:
                 student_id = student[0]
@@ -42,12 +47,12 @@ def main1():
                     if match_found:
                         # call the function to mark attendance
                         seat_and_room = mark_attendance(student_id, course_unit_id, venue_or_room)
-                        # display.on_success(registration_number, "Attendance-Recorded", seat_and_room)
-                        print(f"Attendance-Recorded for {registration_number} at {seat_and_room}")
+                        display.on_success(registration_number, "Attendance-Recorded", seat_and_room)
+                        # print(f"Attendance-Recorded for {registration_number} at {seat_and_room}")
                         break
                     else:
-                        # display.on_failure("Not Registered")
-                        print("Not Registered")
+                        display.on_failure("Not Registered")
+                        # print("Not Registered")
                         break
 
                 elif balance == 0:
@@ -56,23 +61,23 @@ def main1():
                     if match_found:
                         # call the function to mark attendance
                         seat_and_room = mark_attendance(student_id, course_unit_id, venue_or_room)
-                        # display.on_success(registration_number, "Attendance-Recorded", seat_and_room)
-                        print(f"Attendance-Recorded for {registration_number} at {seat_and_room}")
+                        display.on_success(registration_number, "Attendance-Recorded", seat_and_room)
+                        # print(f"Attendance-Recorded for {registration_number} at {seat_and_room}")
                         break
 
                     else:
-                        # display.on_failure("Not Registered")
-                        print("Not Registered")
+                        display.on_failure("Not Registered")
+                        # print("Not Registered")
                         break
                 
                 elif balance != 0:
-                    # display.on_failure(f"Unpaid Tuition Balance: {balance}")
-                    print(f"Unpaid Tuition Balance: {balance}")
+                    display.on_failure(f"Unpaid Tuition Balance: {balance}")
+                    # print(f"Unpaid Tuition Balance: {balance}")
                     break
 
             else: 
-                # display.random_message("Not Found")
-                print("Not Found")
+                display.random_message("Not Found")
+                print("Not Found. Try again.")
             
     except Exception as e:
         print(f'Exception occurred: {str(e)}')

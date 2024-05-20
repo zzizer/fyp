@@ -26,7 +26,7 @@ class Student(models.Model):
     photo = models.ImageField(blank=True, null=True)
 
     privilleged_access = models.BooleanField(default=False)
-    face_encoding = models.BinaryField(blank=True, null=True)
+    face_encoding = models.TextField(blank=True, null=True)
         
     fingerprint_xtics1 = models.TextField(blank=True, null=True)
     fingerprint_xtics2 = models.TextField(blank=True, null=True)

@@ -3,6 +3,7 @@ import time
 from LCD.display import DisplayOnLCD
 from SPECIAL.main_fingerprint import main
 from SPECIAL.main_facial import main1
+import numpy as np
 
 display = DisplayOnLCD()
 
