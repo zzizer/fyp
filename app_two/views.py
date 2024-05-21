@@ -16,7 +16,7 @@ from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 from app_three.models import College, School, Program, Department, CourseUnit, Room, Timetable
-from .analytics import calculate_total_attendance, calculate_attendance_rate, calculate_gender_attendance_rate 
+from .analytics import calculate_total_attendance, calculate_attendance_rate, calculate_gender_attendance_rate, calculate_students_with_tution_balance, calculate_students_under_privilleged_access, calculate_students_with_zero_balance
 
 def attendance_dashboard(request):
 
@@ -157,6 +157,13 @@ def scan_save_fingerprint(request, id):
 
 def analytics(request):
     course_units = CourseUnit.objects.all()
+    with_zero_balance = calculate_students_with_zero_balance()
+    under_privilleged_access = calculate_students_under_privilleged_access()
+    with_tution_balance = calculate_students_with_tution_balance()
+    
+    total_students = Student.objects.all()
+    total_students = len(total_students)
+
     selected_course_unit = None
     
     if request.method == 'POST':
@@ -179,5 +186,10 @@ def analytics(request):
     
     context = {
         'course_units': course_units,
+        'under_privilleged_access': under_privilleged_access,
+        'with_zero_balance': with_zero_balance,
+        'total_students': total_students,
+        'with_tution_balance': with_tution_balance,    
     }
+
     return render(request, 'app_two/Attendance/analytics.html', context)

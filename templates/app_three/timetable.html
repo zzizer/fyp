@@ -13,16 +13,16 @@
         <thead>
             <tr>
                 <th>Date</th>
-                <th>{{timetable.program}}</th>
-                <th>Subject</th>
-                <th>Teacher</th>
+                <th>Time Slot</th>
+                <th>CourseUnit</th>
             </tr>
         </thead>
         <tbody>
             {% for sam in timetable %}
             <tr>
-                <td>{{ sam.date }} {{sam.time_slot}}</td>
-                <td>{{ sam.course_name }} {{sam.venue_or_room}}</td>
+                <td>{{ sam.date }}</td>
+                <td>{{sam.time_slot}}</td>
+                <td>{{ sam.course_name }}</td>
             </tr>
             {% endfor %}
         </tbody>

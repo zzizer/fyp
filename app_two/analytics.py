@@ -22,3 +22,17 @@ def calculate_gender_attendance_rate(course_unit):
     female_attendance_rate = (female_attendance_records.count() / female_students.count()) * 100
     
     return male_attendance_rate, female_attendance_rate
+
+def calculate_students_with_zero_balance():
+    students = Student.objects.all()
+    students_with_zero_balance = [student for student in students if student.balance() == 0]
+    return len(students_with_zero_balance)
+
+def calculate_students_under_privilleged_access():
+    privileged_students = Student.objects.filter(privilleged_access=True)
+    return privileged_students.count()
+
+def calculate_students_with_tution_balance():
+    students = Student.objects.all()
+    students_with_balance = [student for student in students if student.balance() > 0]
+    return len(students_with_balance)
