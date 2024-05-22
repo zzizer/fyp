@@ -3,6 +3,12 @@ from picamera2 import Picamera2
 import face_recognition
 import numpy as np
 from LCD.display import DisplayOnLCD
+import RPi.GPIO as GPIO
+
+# setuo GPIO mode and pin
+GPIO.setmode(GPIO.BCM)
+face_trigger_button_pin = 6
+GPIO.setup(face_trigger_button_pin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 
 display = DisplayOnLCD()
 
@@ -26,11 +32,12 @@ def facial_detection_and_recognition():
         try:
             im = picam2.capture_array()  
             
-            cv.imshow("Camera", im)
+            # cv.imshow("Camera", im)
             
             key = cv.waitKey(1)
             
-            if key == ord('t'):
+            # if key == ord('t'):
+            if GPIO.input(face_trigger_button_pin) == GPIO.LOW:
                 # Convert the captured frame to grayscale
                 gray_im = cv.cvtColor(im, cv.COLOR_RGB2GRAY)
                 

@@ -3,6 +3,13 @@ from SPECIAL.connect_to_database import connect_to_database, close_database_conn
 from SPECIAL.comparison import face_encoding_similarity
 import numpy as np
 from LCD.display import DisplayOnLCD
+from time import sleep
+from SPECIAL.comparison import comparison
+from SPECIAL.connect_to_database import connect_to_database, close_database_connection
+from SPECIAL.timetable_entries_for_current_date import get_timetable_entries_for_current_date, has_registered_for_current_date
+from SPECIAL.parameter_check import parameter_check
+from SPECIAL.mark_attendance import mark_attendance
+from datetime import date
 
 display = DisplayOnLCD()
 
@@ -36,7 +43,7 @@ def main1():
             stored_face_encoding = student[1]
             # print(f'stored_face_encoding: {stored_face_encoding}')
             
-            if face_encoding_similarity(scanned_face_encoding, stored_face_encoding) > 85:
+            if face_encoding_similarity(scanned_face_encoding, stored_face_encoding) > 55:
                 student_id = student[0]
 
                 privileged_access, registration_number, balance, registered_course_units = parameter_check(student_id)

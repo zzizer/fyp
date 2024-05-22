@@ -78,3 +78,6 @@ class DisplayOnLCD():
         self.lcd.clear()
         self.lcd.cursor_pos = (1, 2)
         self.lcd.write_string(message)
+    
+display = DisplayOnLCD()
+display.welcome()
