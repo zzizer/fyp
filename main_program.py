@@ -11,7 +11,7 @@ display = DisplayOnLCD()
 GPIO.setmode(GPIO.BCM)
 
 # Define the pins for the buttons and LEDs
-button_pin_1 = 5
+button_pin_1 = 16
 button_pin_2 = 22
 led_pin_1 = 23
 led_pin_2 = 24

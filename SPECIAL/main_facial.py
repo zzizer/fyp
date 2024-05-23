@@ -40,7 +40,7 @@ def main1():
             for student in data:
                 stored_face_encoding = student[1]
 
-                if face_encoding_similarity(scanned_face_encoding, stored_face_encoding) > 35:
+                if face_encoding_similarity(scanned_face_encoding, stored_face_encoding) > 55:
                     student_id = student[0]
 
                     privileged_access, registration_number, balance, registered_course_units = parameter_check(student_id)
