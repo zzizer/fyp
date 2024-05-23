@@ -43,14 +43,14 @@ class DisplayOnLCD():
     
     def request_face(self):
         self.lcd.clear()
-        self.lcd.cursor_pos = (0, 1)
-        self.lcd.write_string('Facial Recognition')
+        # self.lcd.cursor_pos = (0, 1)
+        # self.lcd.write_string('Facial Recognition')
         self.lcd.cursor_pos = (1, 0)
-        self.lcd.write_string('---------------------------')
-        self.lcd.cursor_pos = (2, 0)
-        self.lcd.write_string('Look into the camera')
-        self.lcd.cursor_pos = (3, 0)
-        self.lcd.write_string('and press 3rd button')
+        self.lcd.write_string('--------------------')
+        self.lcd.cursor_pos = (2, 2)
+        self.lcd.write_string("Face Recog'Mode")
+        # self.lcd.cursor_pos = (3, 0)
+        # self.lcd.write_string('and press 3rd button')
 
     def welcome(self):
         self.lcd.clear()
@@ -79,5 +79,5 @@ class DisplayOnLCD():
         self.lcd.cursor_pos = (1, 2)
         self.lcd.write_string(message)
     
-display = DisplayOnLCD()
-display.welcome()
+# display = DisplayOnLCD()
+# display.request_face()

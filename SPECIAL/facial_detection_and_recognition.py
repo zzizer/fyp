@@ -4,6 +4,7 @@ import face_recognition
 import numpy as np
 from LCD.display import DisplayOnLCD
 import RPi.GPIO as GPIO
+import time
 
 # setuo GPIO mode and pin
 GPIO.setmode(GPIO.BCM)
@@ -37,8 +38,13 @@ def facial_detection_and_recognition():
             
             # cv.imshow("Camera", im)
             
+            display.random_message('Camera Ready')
+            time.sleep(1)
+            display.random_message('Press the button to scan face')
+            time.sleep(1)
+
             key = cv.waitKey(1)
-            
+
             # if key == ord('t'):
             if GPIO.input(face_trigger_button_pin) == GPIO.LOW:
                 # Convert the captured frame to grayscale
@@ -59,7 +65,6 @@ def facial_detection_and_recognition():
                     # Use face_recognition to generate face encoding
                     encoding = face_recognition.face_encodings(rgb_image, [(y, x + w, y + h, x)])[0]
 
-                    
 
                     encoding_bytes = encoding.tobytes()
                     
