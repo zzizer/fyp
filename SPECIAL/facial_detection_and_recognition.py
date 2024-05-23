@@ -36,8 +36,8 @@ def facial_detection_and_recognition():
             im = picam2.capture_array()
             preprocessed_im = preprocess_image(im)
             
-            # Use Dlib's CNN-based face detector for better accuracy
-            face_locations = face_recognition.face_locations(im, model="cnn")
+            # Use HOG-based face detector
+            face_locations = face_recognition.face_locations(im, model="hog")
             
             if face_locations:
                 # Assuming only one face, take the first face found
@@ -45,13 +45,14 @@ def facial_detection_and_recognition():
                 face_image = im[top:bottom, left:right]
                 
                 # Generate face encoding
-                encodings = face_recognition.face_encodings(face_image, known_face_locations=[(top, right, bottom, left)])
+                encodings = face_recognition.face_encodings(im, known_face_locations=[(top, right, bottom, left)])
                 
                 if encodings:
                     encoding = encodings[0]
+                    # print(f"Scanned from camera. Face encoding: {encoding}")
                     encoding_bytes = encoding.tobytes()
                     
-                    print(f"Scanned from camera. Face encoding (bytes): {encoding_bytes}")
+                    # print(f"Scanned from camera. Face encoding (bytes): {encoding_bytes}")
 
                     cv.destroyAllWindows()
                     picam2.stop()
@@ -72,6 +73,11 @@ def facial_detection_and_recognition():
     finally:
         cv.destroyAllWindows()
         picam2.stop()
+
+# if __name__ == "__main__":
+#     facial_detection_and_recognition()
+
+
 
 # if __name__ == "__main__":
 #     facial_detection_and_recognition()

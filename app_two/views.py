@@ -53,24 +53,27 @@ def generate_face_encoding(request, id):
     if student.photo and not student.face_encoding:
         # Use OpenCV for face detection
         image_path = student.photo.path
-        image = cv2.imread(image_path, cv2.IMREAD_GRAYSCALE)
-        face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
-        faces = face_cascade.detectMultiScale(image, scaleFactor=1.3, minNeighbors=5)
+        image = cv2.imread(image_path)
+        
+        # Convert the image to RGB (as required by face_recognition)
+        rgb_image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
 
-        if len(faces) > 0:
-            # Extract the face region
-            x, y, w, h = faces[0]
-            face_region = image[y:y+h, x:x+w]
+        # Use face_recognition to locate faces using HOG-based model
+        face_locations = face_recognition.face_locations(rgb_image, model="hog")
 
-            # Convert the grayscale image to RGB
-            rgb_image = cv2.cvtColor(image, cv2.COLOR_GRAY2RGB)
+        if face_locations:
+            # Assuming only one face, take the first face found
+            top, right, bottom, left = face_locations[0]
 
-            # Use face_recognition to generate face encoding
-            encoding = face_recognition.face_encodings(rgb_image, [(y, x + w, y + h, x)])[0]
+            # Generate face encoding
+            encodings = face_recognition.face_encodings(rgb_image, known_face_locations=[(top, right, bottom, left)])
 
-            # Store the encoding as bytes in the database
-            student.face_encoding = encoding.tobytes()
-            student.save()
+            if encodings:
+                encoding = encodings[0]
+
+                # Store the encoding as bytes in the database
+                student.face_encoding = encoding.tobytes()
+                student.save()
 
     return redirect(reverse('student_details', args=[id]))
 
