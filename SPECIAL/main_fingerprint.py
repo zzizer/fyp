@@ -51,7 +51,7 @@ def main():
             stored_characteristics1 = eval(student[2])
             stored_characteristics2 = eval(student[3])
 
-            if comparison(scanned_xtics, stored_characteristics1) > 80 or comparison(scanned_xtics, stored_characteristics2) > 80:
+            if comparison(scanned_xtics, stored_characteristics1) > 73 or comparison(scanned_xtics, stored_characteristics2) > 75:
                 student_id = student[0]
 
                 privileged_access, registration_number, balance, registered_course_units = parameter_check(student_id)
@@ -70,7 +70,7 @@ def main():
                         display.on_success(registration_number, "Attendance-Recorded", seat_and_room)
                         break
                     else:
-                        display.on_failure("Not Registered")
+                        display.on_failure("Not Registered For CourseUnit")
                         break
 
                 elif balance == 0:
@@ -83,7 +83,7 @@ def main():
                         break
 
                     else:
-                        display.on_failure("Not Registered")
+                        display.on_failure("Not Registered For CourseUnit")
                         break
                 
                 elif balance != 0:
@@ -91,7 +91,7 @@ def main():
                     break
 
             else: 
-                display.random_message("Not Found")
+                display.random_message("Student Not Recognised")
 
     except Exception as e:
         print(f'Exception occurred: {str(e)}')

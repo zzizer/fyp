@@ -43,7 +43,7 @@ def main1():
             stored_face_encoding = student[1]
             # print(f'stored_face_encoding: {stored_face_encoding}')
             
-            if face_encoding_similarity(scanned_face_encoding, stored_face_encoding) > 55:
+            if face_encoding_similarity(scanned_face_encoding, stored_face_encoding) > 40:
                 student_id = student[0]
 
                 privileged_access, registration_number, balance, registered_course_units = parameter_check(student_id)
@@ -58,7 +58,7 @@ def main1():
                         # print(f"Attendance-Recorded for {registration_number} at {seat_and_room}")
                         break
                     else:
-                        display.on_failure("Not Registered")
+                        display.on_failure("Not Registered Courseunit")
                         # print("Not Registered")
                         break
 
@@ -73,7 +73,7 @@ def main1():
                         break
 
                     else:
-                        display.on_failure("Not Registered")
+                        display.on_failure("Not Registered CourseUnit")
                         # print("Not Registered")
                         break
                 
@@ -83,7 +83,7 @@ def main1():
                     break
 
             else: 
-                display.random_message("Not Found")
+                display.random_message("Student Not Recognised")
                 print("Not Found. Try again.")
             
     except Exception as e:

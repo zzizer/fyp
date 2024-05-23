@@ -7,10 +7,13 @@ import RPi.GPIO as GPIO
 
 # setuo GPIO mode and pin
 GPIO.setmode(GPIO.BCM)
-face_trigger_button_pin = 6
+face_trigger_button_pin = 16
 GPIO.setup(face_trigger_button_pin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 
 display = DisplayOnLCD()
+
+# if GPIO.input(face_trigger_button_pin) == GPIO.LOW:
+#     display.random_message('Press the button to scan face')
 
 def facial_detection_and_recognition():
 
