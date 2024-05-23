@@ -37,11 +37,11 @@ def facial_detection_and_recognition():
             im = picam2.capture_array()  
             
             # cv.imshow("Camera", im)
-            
+
             display.random_message('Camera Ready')
-            time.sleep(1)
+            time.sleep(2)
             display.random_message('Press the button to scan face')
-            time.sleep(1)
+            time.sleep(2)
 
             key = cv.waitKey(1)
 
