@@ -1,39 +1,75 @@
+import cv2 as cv
+from picamera2 import Picamera2
+import face_recognition
 from LCD.display import DisplayOnLCD
-import RPi.GPIO as GPIO
-
-# setuo GPIO mode and pin
-GPIO.setmode(GPIO.BCM)
-face_trigger_button_pin = 16
-GPIO.setup(face_trigger_button_pin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+import time
 
 display = DisplayOnLCD()
 
-while True:
-    display.random_message('Press the button')
+def facial_detection_and_recognition():
+    picam2 = Picamera2()
+    picam2.preview_configuration.main.size = (800, 800)
+    picam2.preview_configuration.main.format = "RGB888"
+    picam2.preview_configuration.align()
+    picam2.configure("preview")
 
-    if GPIO.input(face_trigger_button_pin) == GPIO.LOW:
-        display.random_message('Button pressed')
-        break
+    try:
+        picam2.start()
+    except Exception as e:
+        print(f"Exception occurred while starting the camera: {e}")
+        return
 
-# from pyfingerprint.pyfingerprint import PyFingerprint
+    try:
+        display.random_message('Camera Ready')
+        time.sleep(2)
+        display.random_message('Look into the camera')
+        time.sleep(2)
 
-# try:
-#     f = PyFingerprint('/dev/ttyS0', 57600, 0xFFFFFFFF, 0x00000000)
-    
-#     if not f.verifyPassword():
-#         raise ValueError('The given fingerprint sensor password is wrong!')
+        while True:
+            im = picam2.capture_array()
+            
+            # Convert the captured frame to grayscale
+            gray_im = cv.cvtColor(im, cv.COLOR_RGB2GRAY)
+                
+            # Use OpenCV for face detection
+            face_cascade = cv.CascadeClassifier(cv.data.haarcascades + 'haarcascade_frontalface_default.xml')
+            faces = face_cascade.detectMultiScale(gray_im, scaleFactor=1.3, minNeighbors=5)
 
-#         # get_data_from_database()  # Establish a database connection within main
+            if len(faces) > 0:
+                # Extract the face region
+                x, y, w, h = faces[0]
 
-#         # display.random_message("Press Finger")
-#     sleep(3)
+                # Convert the original image to RGB (as required by face_recognition)
+                rgb_image = cv.cvtColor(im, cv.COLOR_RGB2BGR)
 
-#     while not f.readImage():
-#         pass
+                # Use face_recognition to generate face encoding
+                encodings = face_recognition.face_encodings(rgb_image, [(y, x + w, y + h, x)])
 
-#     f.convertImage(FINGERPRINT_CHARBUFFER1)
-#     scanned_xtics = f.downloadCharacteristics(FINGERPRINT_CHARBUFFER1)
-#     print(scanned_xtics)
+                if encodings:
+                    encoding = encodings[0]
+                    encoding_bytes = encoding.tobytes()
+                    
+                    print(f"Scanned from camera. Face encoding (bytes): {encoding_bytes}")
 
-# except Exception as e:
-#     print('Operation failed!')
+                    cv.destroyAllWindows()
+                    picam2.stop()
+                    
+                    return encoding_bytes
+                else:
+                    print("Face detected, but no encoding generated")
+                    display.random_message('Face detected, but no encoding generated')
+                    time.sleep(2)
+            else:
+                print("No face detected")
+                display.random_message('No face detected, Please try again')
+                time.sleep(2)
+
+    except Exception as e:
+        print(f"Exception occurred: {e}")
+
+    finally:
+        cv.destroyAllWindows()
+        picam2.stop()
+
+if __name__ == "__main__":
+    facial_detection_and_recognition()

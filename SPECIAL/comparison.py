@@ -24,9 +24,9 @@ def face_encoding_similarity(scanned_face_encoding, saved_face_encoding):
     # print(type(saved_face_encoding))
     scanned_face_encoding = np.frombuffer(scanned_face_encoding, dtype=np.float64)
     saved_face_encoding = np.frombuffer(saved_face_encoding, dtype=np.float64)
-    print('this step')
+    # print('this step')
     face_distances = face_recognition.face_distance([scanned_face_encoding], saved_face_encoding)
-    print('this step again')
+    # print('this step again')
     similarity_percentage = (1 - face_distances[0]) * 100
     print(f'Similarity Percentage: {similarity_percentage}')
 
