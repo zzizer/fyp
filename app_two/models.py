@@ -30,7 +30,8 @@ class Student(models.Model):
         
     fingerprint_xtics1 = models.TextField(blank=True, null=True)
     fingerprint_xtics2 = models.TextField(blank=True, null=True)
-
+    fingerprint_position = models.IntegerField(null=True, blank=True)
+    
     paid_tuition = models.PositiveIntegerField(default=0, blank=True, null=True)
     registered_course_units = models.ManyToManyField(CourseUnit, blank=True)
 

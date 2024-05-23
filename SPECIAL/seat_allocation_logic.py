@@ -60,7 +60,7 @@ def analysis(course_unit_id, room_name):
 
     current_time = datetime.now().time()
 
-    if current_time >= datetime.strptime('14:00', '%H:%M').time() and current_time <= datetime.strptime('18:00', '%H:%M').time():
+    if current_time >= datetime.strptime('14:00', '%H:%M').time() and current_time <= datetime.strptime('23:00', '%H:%M').time():
         time_slot = '2pm-5pm'
     elif current_time >= datetime.strptime('07:00', '%H:%M').time() and current_time <= datetime.strptime('13:50', '%H:%M').time():
         time_slot = '9am-12pm'

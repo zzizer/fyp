@@ -43,7 +43,7 @@
                 {% else %}
                 <p>Student Face Encoding: Not Available</p>
                 {% endif %}
-                {% if student.fingerprint_xtics1 %}
+                {% if student.fingerprint_position %}
                 <p>Student Fingerprint Encodings: Already Captured</p>
                 {% else %}
                 <p>Student Fingerprint Encodings: Not Available</p>
@@ -51,7 +51,7 @@
                 <a class="btn btn-primary" href="{% url 'student_update' student.id %}">Edit</a>
                 <a class="btn btn-primary" href="{% url 'all_students' %}">Back</a>
 
-                {% if student.photo and not student.fingerprint_xtics1 %}
+                {% if student.photo and not student.fingerprint_position %}
                     <a class="btn btn-primary" href="{% url 'scan_save_fingerprint' id=student.id %}">Scan & Save Fingerprint</a>
                 {% endif %}
 

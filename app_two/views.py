@@ -17,6 +17,7 @@ from django.http import HttpResponseRedirect
 from django.urls import reverse
 from app_three.models import College, School, Program, Department, CourseUnit, Room, Timetable
 from .analytics import calculate_total_attendance, calculate_attendance_rate, calculate_gender_attendance_rate, calculate_students_with_tution_balance, calculate_students_under_privilleged_access, calculate_students_with_zero_balance
+from django.shortcuts import get_object_or_404, redirect
 
 def attendance_dashboard(request):
 
@@ -100,63 +101,137 @@ def all_students(request):
 
 @login_required(login_url='signin')
 def scan_save_fingerprint(request, id):
+    student = get_object_or_404(Student, id=id)
+    display = DisplayOnLCD()  # Ensure this class is imported correctly
+
     try:
-        student = Student.objects.get(id=id)
-
-        display = DisplayOnLCD()
-
         f = PyFingerprint('/dev/ttyS0', 57600, 0xFFFFFFFF, 0x00000000)
 
         if not f.verifyPassword():
             raise ValueError('The given fingerprint sensor password is wrong!')
 
-        display.random_message('Place Finger')
-        time.sleep(4)
+    except Exception as e:
+        display.random_message('Sensor Init Failed')
+        messages.error(request, 'The fingerprint sensor could not be initialized. Please try again later.')
+        return redirect(reverse('student_details', args=[id]))
 
+    try:
+        display.random_message('Place Finger...')
+        time.sleep(2)
+        
+        # Wait for the finger to be read
         while not f.readImage():
             pass
 
+        # Convert the read image to characteristics and store in charbuffer 1
         f.convertImage(FINGERPRINT_CHARBUFFER1)
-        charactertics1 = f.downloadCharacteristics(FINGERPRINT_CHARBUFFER1)
+
+        # Check if the finger is already enrolled
+        result = f.searchTemplate()
+        positionNumber = result[0]
+
+        if positionNumber >= 0:
+            display.random_message('Template Exists')
+            messages.warning(request, f'Template already exists at position #{positionNumber}')
+            return redirect(reverse('student_details', args=[id]))
 
         display.random_message('Remove Finger...')
-        
-        time.sleep(4)
+        time.sleep(2)
 
         display.random_message('Place Finger Again...')
+        time.sleep(2)
 
+        # Wait for the finger to be read again
         while not f.readImage():
             pass
 
+        # Convert the read image to characteristics and store in charbuffer 2
         f.convertImage(FINGERPRINT_CHARBUFFER2)
-        charactertics2 = f.downloadCharacteristics(FINGERPRINT_CHARBUFFER2)
 
-        if comparison(charactertics1, charactertics2) > 70:
-            display.random_message('Meet 70% Match')
-
-            fingerprint_xtics1 = charactertics1
-            fingerprint_xtics2 = charactertics2
-
-            student.fingerprint_xtics1 = fingerprint_xtics1
-            student.fingerprint_xtics2 = fingerprint_xtics2
-
-            student.save()
-            
-            time.sleep(2)
-            display.random_message('Fingerprint Saved')
-
-            return redirect(reverse('student_details', args=[id]))
-        else:
+        # Compare the charbuffers
+        if f.compareCharacteristics() == 0:
+            display.random_message('Fingers do not match')
             messages.warning(request, 'Fingers do not match. Please try again.')
-            time.sleep(2)
-            messages.error(request, f"Fingerprint match is {comparison(charactertics1, charactertics2)}%")
-            display.random_message("Don't Meet 70% Match")
             return redirect(reverse('student_details', args=[id]))
+
+        # Create a template
+        f.createTemplate()
+
+        # Save the template at a new position number
+        positionNumber = f.storeTemplate()
+
+        # Save the position number to the student's record in the database
+        student.fingerprint_position = positionNumber
+        student.save()
+
+        time.sleep(2)
+        display.random_message('Fingerprint Saved')
+        messages.success(request, 'Fingerprint saved successfully.')
+        return redirect(reverse('student_details', args=[id]))
 
     except Exception as e:
-        messages.error(request, f'Operation failed! Exception message: {str(e)}')
-        display.random_message('Operation failed')
+        display.random_message('Operational Error')
+        messages.error(request, 'Operation failed. Please try again.')
         return redirect(reverse('student_details', args=[id]))
+
+
+    # try:
+    #     student = Student.objects.get(id=id)
+
+    #     display = DisplayOnLCD()
+
+    #     f = PyFingerprint('/dev/ttyS0', 57600, 0xFFFFFFFF, 0x00000000)
+
+    #     if not f.verifyPassword():
+    #         raise ValueError('The given fingerprint sensor password is wrong!')
+
+    #     display.random_message('Place Finger')
+    #     time.sleep(4)
+
+    #     while not f.readImage():
+    #         pass
+
+    #     f.convertImage(FINGERPRINT_CHARBUFFER1)
+    #     charactertics1 = f.downloadCharacteristics(FINGERPRINT_CHARBUFFER1)
+
+    #     display.random_message('Remove Finger...')
+        
+    #     time.sleep(4)
+
+    #     display.random_message('Place Finger Again...')
+
+    #     while not f.readImage():
+    #         pass
+
+    #     f.convertImage(FINGERPRINT_CHARBUFFER2)
+    #     charactertics2 = f.downloadCharacteristics(FINGERPRINT_CHARBUFFER2)
+
+    #     if comparison(charactertics1, charactertics2) > 70:
+    #         display.random_message('Meet 70% Match')
+
+    #         fingerprint_xtics1 = charactertics1
+    #         fingerprint_xtics2 = charactertics2
+
+    #         student.fingerprint_xtics1 = fingerprint_xtics1
+    #         student.fingerprint_xtics2 = fingerprint_xtics2
+
+    #         student.save()
+            
+    #         time.sleep(2)
+    #         display.random_message('Fingerprint Saved')
+
+    #         return redirect(reverse('student_details', args=[id]))
+    #     else:
+    #         messages.warning(request, 'Fingers do not match. Please try again.')
+    #         time.sleep(2)
+    #         messages.error(request, f"Fingerprint match is {comparison(charactertics1, charactertics2)}%")
+    #         display.random_message("Don't Meet 70% Match")
+    #         return redirect(reverse('student_details', args=[id]))
+
+    # except Exception as e:
+    #     messages.error(request, f'Operation failed! Exception message: {str(e)}')
+    #     display.random_message('Operation failed')
+    #     return redirect(reverse('student_details', args=[id]))
 
 def analytics(request):
     course_units = CourseUnit.objects.all()
